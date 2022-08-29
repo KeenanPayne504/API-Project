@@ -14,12 +14,12 @@ module.exports = {
         unique: true
       },
       email: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(256),
         allowNull: false,
         unique: true
       },
       hashedPassword: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING.BINARY,
         allowNull: false
       },
       createdAt: {
