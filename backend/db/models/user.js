@@ -1,5 +1,5 @@
 'use strict';
-const { Model, Validator } = require('sequelize');
+const { Model, Validator, STRING } = require('sequelize');
 const bcrypt = require('bcryptjs');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -36,19 +36,47 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
 
-    static async signup({ username, email, password }) {
+    static async signup({ firstName, lastName, username, email, password }) {
       const hashedPassword = bcrypt.hashSync(password);
-      const user = await User.create({username, email, hashedPassword});
+      const user = await User.create({firstName, lastName, username, email, hashedPassword});
       return await User.scope('currentUser').findByPk(user.id);
     }
 
 
     static associate(models) {
       // define association here
+      User.hasMany(models.Album, {foreignKey: "userId"})
+      User.hasMany(models.Song, {foreignKey: "userId"})
+      User.hasMany(models.Playlist, {foreignKey: "userId"})
+      User.hasMany(models.Comment, {foreignKey: "userId"})
     }
   }
   User.init(
     {
+      firstName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          len: [4,30],
+          isNotEmail(value) {
+            if (Validator.isEmail(value)) {
+              throw new Error("Cannot be an email.");
+            }
+          }
+        }
+      },
+      lastName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          len: [4,30],
+          isNotEmail(value) {
+            if (Validator.isEmail(value)) {
+              throw new Error("Cannot be an email.");
+            }
+          }
+        }
+      },
       username: {
         type: DataTypes.STRING,
         allowNull: false,
