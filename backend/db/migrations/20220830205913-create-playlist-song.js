@@ -12,28 +12,28 @@ module.exports = {
         type: Sequelize.INTEGER,
         references: {
             model: 'Songs',
-            key: 'id'
-        },
-        onDelete: 'cascade'
+            key: "id"
+        }
     },
       playlistId: {
         type: Sequelize.INTEGER,
         references: {
             model: 'Playlists',
-            key: 'id'
-        },
-        onDelete: 'cascade'
+            key: "id"
+        }
     },
       order: {
         type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
     });
   },

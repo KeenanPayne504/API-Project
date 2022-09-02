@@ -13,16 +13,14 @@ module.exports = {
         references: {
           model: 'Albums',
           key: 'id'
-        },
-        onDelete: 'cascade'
+        }
       },
       userId: {
         type: Sequelize.INTEGER,
         references: {
             model: 'Users',
             key: 'id'
-        },
-        onDelete: 'cascade'
+        }
     },
       title: {
         type: Sequelize.STRING,
@@ -40,11 +38,13 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
     });
   },
