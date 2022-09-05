@@ -13,14 +13,16 @@ module.exports = {
         references: {
             model: 'Songs',
             key: "id"
-        }
+        },
+        onDelete: 'cascade'
     },
       playlistId: {
         type: Sequelize.INTEGER,
         references: {
             model: 'Playlists',
             key: "id"
-        }
+        },
+        onDelete: 'cascade'
     },
       order: {
         type: Sequelize.INTEGER

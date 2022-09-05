@@ -63,17 +63,16 @@ router.post("/", requireAuth, async (req, res) => {
 router.post("/:playlistId/songs", requireAuth, async (req, res) => {
     const { songId} = req.body;
     const {playlistId} = req.params
-    const findId = await PlaylistSong.findOne({
-      where: {playlistId: playlistId}
-    })
 
-    const createPlaylist = await Playlist.create({
-        findId
+    console.log(req.params)
+
+    const findId = await PlaylistSong.findByPk(playlistId)
+    const addSong = await Playlist.create({
+      songId
     });
-    // double check albumId
 
-    if (!createPlaylist) {
-      res.status(400);
+    if (!findId) {
+      res.status(404);
       return res.json({
         message: "Validation Error",
         statusCode: 404,
@@ -82,11 +81,14 @@ router.post("/:playlistId/songs", requireAuth, async (req, res) => {
         },
       });
     }
+
+
+
     res.status(201);
     return res.json({
-        id: findId.id,
-        playlistId:findId.playlistId,
-        songId:findId.songId
+        id: addSong.id,
+        playlistId:playlistId,
+        songId:songId
     });
   });
 
