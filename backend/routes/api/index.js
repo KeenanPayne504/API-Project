@@ -3,6 +3,9 @@ const router = require('express').Router();
 const sessionRouter = require('./session.js');
 const usersRouter = require('./users.js');
 const songsRouter = require('./songs.js');
+const albumsRouter = require('./albums.js');
+const playlistsRouter = require('./playlist.js');
+const commentsRouter = require('./comment.js');
 const artistsRouter = require('./artist.js');
 const { restoreUser } = require("../../utils/auth.js");
 
@@ -15,6 +18,9 @@ router.use('/session', sessionRouter);
 
 router.use('/users', usersRouter);
 router.use('/songs', songsRouter);
+router.use('/albums', albumsRouter);
+router.use('/playlists', playlistsRouter);
+router.use('/comments', commentsRouter);
 router.use('/artists', artistsRouter);
 
 router.post('/test', (req, res) => {
