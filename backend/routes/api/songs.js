@@ -80,17 +80,39 @@ router.get('/', async(req, res) => {
   //get all comments for song by Id
   router.get("/:songId/comments", requireAuth, async (req, res) => {
 
+    const { songId } = req.params;
+    const song = await Song.findByPk(songId);
 
-    console.log(req.params)
+    if (!song) {
+      res.status(404);
+      return res.json({
+        message: "Validation Error",
+        statusCode: 404,
+        errors: {
+          body: "Song couldn't be found"
+        },
+      });
+    }
+
     const getComment = await Comment.findAll({
       include: [
         {model: User, attributes: ["id", "username"]}
         // add previewimage later
       ],
         where: {
-          userId: req.user.id,
+          songId: songId,
         },
       });
+
+      if (!getComment) {
+        res.status(404);
+        return res.json({
+          message: "Validation Error",
+          errors: {
+            body: "Song couldn't be found"
+          },
+        });
+      }
 
 
 
@@ -110,6 +132,19 @@ router.get('/', async(req, res) => {
     const createdAt = req.user.dataValues.createdAt;
     const updatedAt = req.user.dataValues.updatedAt;
 
+    const song = await Song.findByPk(songId);
+
+    if (!song) {
+      res.status(404);
+      return res.json({
+        message: "Validation Error",
+        statusCode: 404,
+        errors: {
+          body: "Song couldn't be found"
+        },
+      });
+    }
+
     const createComment = await Comment.create({
 
       songId,
@@ -126,8 +161,7 @@ router.get('/', async(req, res) => {
         message: "Validation Error",
         statusCode: 400,
         errors: {
-          title: "Song title is required",
-          url: "Audio is required"
+          body: "Comment body text is required"
         },
       });
     }
@@ -142,14 +176,22 @@ router.get('/', async(req, res) => {
     const { title, description, url, imageUrl, albumId} =
       req.body;
     const userId = req.user.dataValues.id;
+    const album = await Album.findByPk(albumId)
 
+    if (!album && albumId !== null) {
+      res.status(404);
+      return res.json({
+        message: "Album couldn't be found",
+        statusCode: 404,
+      });
+    }
     const createSong = await Song.create({
       userId,
       title,
       description,
       url,
       imageUrl,
-      albumId: albumId
+      albumId
     });
     // double check albumId check
 
@@ -164,6 +206,9 @@ router.get('/', async(req, res) => {
         },
       });
     }
+
+
+
     res.status(201);
     return res.json({
       createSong

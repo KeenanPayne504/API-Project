@@ -63,7 +63,9 @@ router.post("/", requireAuth, async (req, res) => {
 router.post("/:playlistId/songs", requireAuth, async (req, res) => {
     const { songId} = req.body;
     const {playlistId} = req.params
-    const findId = await PlaylistSong.findByPk(playlistId)
+    const findId = await PlaylistSong.findOne({
+      where: {playlistId: playlistId}
+    })
 
     const createPlaylist = await Playlist.create({
         findId
@@ -106,12 +108,12 @@ router.post("/:playlistId/songs", requireAuth, async (req, res) => {
         },
       });
 
-      // if (!getPlaylist) {
-      //   return res.json({
-      //     message: "Artist couldn't be found",
-      //     statusCode: 404,
-      //   });
-      // }
+      if (!getPlaylist) {
+        return res.json({
+          message: "Playlist couldn't be found",
+          statusCode: 404,
+        });
+      }
 
     res.status(200);
     return res.json(getPlaylist);

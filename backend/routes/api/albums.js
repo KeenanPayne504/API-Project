@@ -41,6 +41,14 @@ router.get("/:albumId", requireAuth, async (req, res) => {
       },
     });
 
+    if (!getAlbum) {
+      res.status(404);
+      return res.json({
+        message: "Album couldn't be found",
+        statusCode: 404,
+      });
+    }
+
 
   res.status(200);
   return res.json(getAlbum);

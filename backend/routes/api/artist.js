@@ -12,20 +12,19 @@ router.get("/:userId/songs", requireAuth, async (req, res) => {
 
 
     const { userId } = req.params;
-    console.log(req.params)
-    const getArtist = await Song.findByPk(userId, {
+    const artist = await User.findByPk(userId)
+    if (!artist) {
+      return res.json({
+        message: "Artist couldn't be found",
+        statusCode: 404,
+      });
+    }
+    const getArtist = await Song.findAll({
         where: {
-          userId: req.user.id,
+          userId: userId,
         },
       });
-      console.log(getArtist)
 
-      if (!getArtist) {
-        return res.json({
-          message: "Artist couldn't be found",
-          statusCode: 404,
-        });
-      }
 
     res.status(200);
     return res.json(getArtist);
@@ -83,7 +82,7 @@ router.get("/:userId/albums", requireAuth, async (req, res) => {
 
 
 
-//get details of album by id
+//get details of artist by id
 //fix response details
 
 router.get("/:userId", requireAuth, async (req, res) => {
@@ -91,6 +90,16 @@ router.get("/:userId", requireAuth, async (req, res) => {
 
   const { userId } = req.params;
   const getArtist = await User.findByPk(userId);
+
+  if (!getArtist) {
+    res.status(404);
+    return res.json({
+      message: "Validation Error",
+      errors: {
+        body: "Artist couldn't be found"
+      },
+    });
+  }
 
 
   res.status(200);
