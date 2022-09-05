@@ -48,15 +48,15 @@ router.get('/', async(req, res) => {
     });
   });
 
-  //get songs by id
+  //get  details of a song by id
   router.get("/:songId", requireAuth, async (req, res) => {
 
 
     const { songId } = req.params;
     console.log(req.params)
-    const getArtist = await Song.findByPk(songId, {
+    const getSong = await Song.findByPk(songId, {
       include: [
-        {model: User, attributes: ["id", "username"]},
+        {model: User, as: "Artist", attributes: ["id", "username"]},
         {model: Album, attributes: ["id", "title"]}
         // add previewimage later
       ],
@@ -64,22 +64,20 @@ router.get('/', async(req, res) => {
           userId: req.user.id,
         },
       });
-      console.log(getArtist)
 
-      // if (!getArtist) {
-      //   return res.json({
-      //     message: "Artist couldn't be found",
-      //     statusCode: 404,
-      //   });
-      // }
+      if (!getSong) {
+        return res.json({
+          message: "Song couldn't be found",
+          statusCode: 404,
+        });
+      }
 
     res.status(200);
-    return res.json(getArtist);
+    return res.json(getSong);
   });
 
 
   //get all comments for song by Id
-  // need to list all comments instead of just 1
   router.get("/:songId/comments", requireAuth, async (req, res) => {
 
 
