@@ -53,17 +53,17 @@ router.get('/', async(req, res) => {
 
 
     const { songId } = req.params;
-    console.log(req.params)
     const getSong = await Song.findByPk(songId, {
       include: [
-        {model: User, as: "Artist", attributes: ["id", "username"]},
-        {model: Album, attributes: ["id", "title"]}
+        {model: User, as: "Artist", attributes: ["id", "username", "imageUrl"]},
+        {model: Album, attributes: ["id", "title", "imageUrl"]}
         // add previewimage later
       ],
         where: {
           userId: req.user.id,
         },
       });
+
 
       if (!getSong) {
         return res.json({
@@ -86,11 +86,9 @@ router.get('/', async(req, res) => {
     if (!song) {
       res.status(404);
       return res.json({
-        message: "Validation Error",
         statusCode: 404,
-        errors: {
           body: "Song couldn't be found"
-        },
+
       });
     }
 
@@ -137,11 +135,9 @@ router.get('/', async(req, res) => {
     if (!song) {
       res.status(404);
       return res.json({
-        message: "Validation Error",
         statusCode: 404,
-        errors: {
           body: "Song couldn't be found"
-        },
+
       });
     }
 
@@ -178,6 +174,8 @@ router.get('/', async(req, res) => {
     const userId = req.user.dataValues.id;
     const album = await Album.findByPk(albumId)
 
+
+
     if (!album && albumId !== null) {
       res.status(404);
       return res.json({
@@ -193,7 +191,7 @@ router.get('/', async(req, res) => {
       imageUrl,
       albumId
     });
-    // double check albumId check
+
 
     if (!createSong) {
       res.status(400);
@@ -210,9 +208,9 @@ router.get('/', async(req, res) => {
 
 
     res.status(201);
-    return res.json({
+    return res.json(
       createSong
-    });
+    );
   });
 
   //edit a Song

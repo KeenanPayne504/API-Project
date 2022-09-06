@@ -1,5 +1,5 @@
 const express = require('express');
-const { Album, Song } = require('../../db/models');
+const { Album, Song, User } = require('../../db/models');
 const { setTokenCookie, requireAuth, restoreUser } = require('../../utils/auth');
 
 
@@ -33,9 +33,11 @@ router.get("/:albumId", requireAuth, async (req, res) => {
 
   const { albumId } = req.params;
   const getAlbum = await Album.findByPk(albumId, {
-      include: {
-          model: Song
-        },
+
+      include: [
+        {model: User, as: "Artist", attributes: ["id", "username", "imageUrl"]},
+        {model: Song}
+      ],
       where: {
         userId: req.user.id,
       },
@@ -88,14 +90,9 @@ router.post("/", requireAuth, async (req, res) => {
     });
   }
   res.status(201);
-  return res.json({
-    userId,
-    title,
-    description,
-    createdAt,
-    updatedAt,
-    imageUrl
-  });
+  return res.json(
+    createAlbum
+  );
 });
 
 

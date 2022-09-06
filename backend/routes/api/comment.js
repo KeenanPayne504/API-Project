@@ -51,7 +51,6 @@ router.put("/:commentId", async (req, res) => {
 
   //delete comment
 
-   // delete a playlist
 
 router.delete("/:commentId", requireAuth, async (req, res) => {
     const { commentId } = req.params;
