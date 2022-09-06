@@ -60,55 +60,52 @@ router.post("/", requireAuth, async (req, res) => {
 
 
 //Add song to playlist
-router.post("/:playlistId/songs", requireAuth, async (req, res) => {
-    const { songId} = req.body;
-    const {playlistId} = req.params
+router.post('/:playlistId/songs', requireAuth, async (req, res) => {
+  const {playlistId} = req.params;
+  const {songId} = req.body;
 
-    console.log(req.params)
+  if (!await Playlist.findByPk(playlistId)) {
+    res.status(404)
+   return res.json({
+     message: "Playlist couldn't be found",
+     statusCode: 404
+   });
+}
 
-    const findId = await PlaylistSong.findByPk(playlistId)
-    const addSong = await Playlist.create({
-      songId
-    });
+ if (!await Song.findByPk(songId)) {
+    res.status(404)
+   return res.json({
+     message: "Song couldn't be found",
+     statusCode: 404
+   });
+}
 
-    if (!findId) {
-      res.status(404);
-      return res.json({
-        message: "Validation Error",
-        statusCode: 404,
-        errors: {
-          name: "Playlist couldn't be found"
-        },
-      });
-    }
+  await PlaylistSong.create({songId, playlistId});
 
-
-
-    res.status(201);
-    return res.json({
-        id: addSong.id,
-        playlistId:playlistId,
-        songId:songId
-    });
+  const findPlaylist = await PlaylistSong.findOne({
+      where: {
+          songId: songId,
+          playlistId: playlistId
+      },
+      attributes: ['id', 'songId', 'playlistId']
   });
+  res.json(findPlaylist);
+});
 
 
 
   //get details of playlist by id
-  router.get("/:playlistId", requireAuth, async (req, res) => {
+  router.get("/:playlistId",  async (req, res) => {
 
 
-    const { playlistId } = req.params;
-    console.log(PlaylistSong)
+    const { playlistId} = req.params;
     const getPlaylist = await Playlist.findByPk(playlistId, {
-        include: {
-            model: Song,
-            through: {attributes: []}
-          },
-        where: {
-          userId: req.user.id,
-        },
-      });
+      include: {
+        model: Song,
+        through: {attributes: []}
+      }
+    });
+    console.log(req.params)
 
       if (!getPlaylist) {
         return res.json({

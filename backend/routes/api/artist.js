@@ -36,7 +36,7 @@ router.get("/:userId/playlists", requireAuth, async (req, res) => {
 
     const { userId } = req.params;
     console.log(req.params)
-    const getArtist = await Playlist.findByPk(userId, {
+    const getArtist = await Playlist.findAll({
         where: {
           userId: req.user.id,
         },
