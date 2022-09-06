@@ -33,22 +33,24 @@ router.get("/:userId/songs", requireAuth, async (req, res) => {
   //get playlists by artistId
 router.get("/:userId/playlists", requireAuth, async (req, res) => {
 
+  const { userId } = req.params;
 
-    const { userId } = req.params;
+  
+  if (!await User.findByPk(userId)) {
+    return res.json({
+      message: "Artist couldn't be found",
+      statusCode: 404,
+    });
+  }
+
     console.log(req.params)
     const getArtist = await Playlist.findAll({
         where: {
-          userId: req.user.id,
+          userId: userId,
         },
       });
       console.log(getArtist)
 
-      if (!getArtist) {
-        return res.json({
-          message: "Artist couldn't be found",
-          statusCode: 404,
-        });
-      }
 
     res.status(200);
     return res.json(getArtist);
